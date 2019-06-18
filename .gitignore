@@ -1,0 +1,32 @@
+# Linux
+.*
+!.coveragerc
+!.gitignore
+!.travis.yml
+
+
+# vim
+.*.sw[a-z]
+*.un~
+Session.vim
+
+
+# Python
+*.py[co]
+__pycache__
+
+# Packages
+*.egg
+*.egg-info
+build
+dist
+pip-wheel-metadata
+
+
+# Unit test / coverage reports
+.coverage
+.tox
+htmlcov
+
+
+# project
