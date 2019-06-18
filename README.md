@@ -4,6 +4,8 @@
 
 Detect user idle time or inactivity on Linux and Windows.
 
+**WARNING** This project is in an alpha status! Though there is already some code to support Windows, it has only been tested on Wayland/Gnome. 
+
 
 ## Requirements
 
