@@ -24,7 +24,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.7"
 Jeepney = "^0.4.0"
-pywin32 = {version = "^224.0",platform = "windows"}
+pywin32 = {version = ">=224,<302",platform = "windows"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^3.0"
