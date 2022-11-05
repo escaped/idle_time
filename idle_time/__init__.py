@@ -3,8 +3,7 @@ import ctypes.util
 import logging
 from typing import Any, List, Type
 
-from jeepney import DBusAddress, new_method_call
-from jeepney.integrate.blocking import connect_and_authenticate
+import dbus
 
 logger = logging.getLogger(name="idle_time")
 
@@ -75,17 +74,15 @@ class GnomeWaylandIdleMonitor(IdleMonitor):
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
 
-        address = DBusAddress(
-            "/org/gnome/Mutter/IdleMonitor/Core",
-            bus_name="org.gnome.Mutter.IdleMonitor",
-            interface="org.gnome.Mutter.IdleMonitor",
-        )
-        self.connection = connect_and_authenticate(bus="SESSION")
-        self.message = new_method_call(address, "GetIdletime")
+        session_bus = dbus.SessionBus()
+        for service in session_bus.list_names():
+            if 'IdleMonitor' in service:
+                service_path = f"/{service.replace('.', '/')}/Core"
+                self.connection = session_bus.get_object(service, service_path)
+                self.service = service
 
     def get_idle_time(self) -> float:
-        reply = self.connection.send_and_get_reply(self.message)
-        idle_time = reply[0]
+        idle_time = self.connection.GetIdletime(dbus_interface=self.service)
         return idle_time / 1000
 
 
