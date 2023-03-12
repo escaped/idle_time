@@ -16,6 +16,7 @@ authors     = [
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD-3-Clause",
     "Operating System :: Unix",
 ]
 dependencies = [
