@@ -9,13 +9,13 @@ description       = "System idle time using DBus"
 readme            = "README.md"
 keywords          = ["lnxlink"]
 requires-python   = ">=3.7.0"
+license           = "BSD-3-Clause"
 authors     = [
     {name="Alexander Frenzel", email="alex@relatedworks.com"},
     {name="bkbilly", email="bkbilly@hotmail.com"}
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: BSD-3-Clause",
     "Operating System :: Unix",
 ]
 dependencies = [
