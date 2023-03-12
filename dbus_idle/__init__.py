@@ -5,7 +5,7 @@ from typing import Any, List, Type
 
 import dbus
 
-logger = logging.getLogger(name="idle_time")
+logger = logging.getLogger(name="dbus_idle")
 
 
 class IdleMonitor:
@@ -32,7 +32,7 @@ class IdleMonitor:
                 logger.warning("Could not load %s", monitor_class, exc_info=True)
         raise RuntimeError("Could not find a working monitor.")
 
-    def get_idle_time(self) -> float:
+    def get_dbus_idle(self) -> float:
         """
         Return idle time in seconds.
         """
@@ -42,7 +42,7 @@ class IdleMonitor:
         """
         Return whether the user is idling.
         """
-        return self.get_idle_time() > self.idle_threshold
+        return self.get_dbus_idle() > self.idle_threshold
 
 
 try:
@@ -59,7 +59,7 @@ else:
           * https://stackoverflow.com/q/911856
         """
 
-        def get_idle_time(self) -> float:
+        def get_dbus_idle(self) -> float:
             return (win32api.GetTickCount() - win32api.GetLastInputInfo()) / 1000
 
 
@@ -81,9 +81,9 @@ class GnomeWaylandIdleMonitor(IdleMonitor):
                 self.connection = session_bus.get_object(service, service_path)
                 self.service = service
 
-    def get_idle_time(self) -> float:
-        idle_time = self.connection.GetIdletime(dbus_interface=self.service)
-        return idle_time / 1000
+    def get_dbus_idle(self) -> float:
+        dbus_idle = self.connection.GetIdletime(dbus_interface=self.service)
+        return dbus_idle / 1000
 
 
 class X11IdleMonitor(IdleMonitor):
@@ -130,7 +130,7 @@ class X11IdleMonitor(IdleMonitor):
         # allocate memory for idle information
         self.xss_info = self.lib_xss.XScreenSaverAllocInfo()
 
-    def get_idle_time(self) -> float:
+    def get_dbus_idle(self) -> float:
         self.lib_xss.XScreenSaverQueryInfo(self.display, self.root_window, self.xss_info)
         return self.xss_info.contents.idle / 1000
 
