@@ -16,7 +16,11 @@ Detect user idle time or inactivity on Linux and Windows.
 
 ## Installation
 
-Install using `pip install dbus-idle`
+Install using:
+```
+sudo apt install meson libdbus-glib-1-dev patchelf
+pip install dbus-idle
+```
 
 
 ## Usage
