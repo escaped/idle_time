@@ -8,5 +8,5 @@ def main():
         description="Get idle time in seconds from DBus")
     parser.parse_args()
 
-    monitor = IdleMonitor.get_monitor()
-    print(monitor.get_dbus_idle())
+    milliseconds = IdleMonitor().get_dbus_idle()
+    print(milliseconds)

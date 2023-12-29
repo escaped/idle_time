@@ -4,7 +4,7 @@
 ![python version](https://img.shields.io/pypi/pyversions/dbus-idle.svg)
 ![license](https://img.shields.io/pypi/l/dbus-idle.svg)
 
-Python library to detect user idle time or inactivity on Linux and Windows.
+Python library to detect user idle time in milliseconds or inactivity on Linux and Windows.
 
 
 ## Requirements
@@ -31,8 +31,7 @@ or access the current idle time from within your python program
 ```python
 from dbus_idle import IdleMonitor
 
-monitor = IdleMonitor.get_monitor()
-monitor.get_dbus_idle()
+milliseconds = IdleMonitor().get_dbus_idle()
 ```
 
 ## Contribution

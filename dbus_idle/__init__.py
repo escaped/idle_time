@@ -4,7 +4,6 @@ import logging
 from typing import Any, List, Type
 import subprocess
 
-import dbus
 
 logger = logging.getLogger(name="dbus_idle")
 logger.setLevel(logging.ERROR)
@@ -36,33 +35,21 @@ class IdleMonitor:
 
     def get_dbus_idle(self) -> float:
         """
-        Return idle time in seconds.
+        Return idle time in milliseconds.
         """
-        raise NotImplementedError()
+        for monitor_class in self.subclasses:
+            try:
+                return monitor_class().get_dbus_idle()
+            except Exception:
+                logger.warning("Could not load %s", monitor_class, exc_info=True)
+        raise RuntimeError("Could not find a working monitor.")
+
 
     def is_idle(self) -> bool:
         """
         Return whether the user is idling.
         """
         return self.get_dbus_idle() > self.idle_threshold
-
-
-class WindowsIdleMonitor(IdleMonitor):
-    """
-    Idle monitor for Windows.
-
-    Based on
-      * https://stackoverflow.com/q/911856
-    """
-
-    def __init__(self, **kwargs) -> None:
-        import win32api
-        self.win32api = win32api
-
-    def get_dbus_idle(self) -> float:
-        current_tick = self.win32api.GetTickCount()
-        last_tick = self.win32api.GetLastInputInfo()
-        return current_tick - last_tick
 
 
 class DBusIdleMonitor(IdleMonitor):
@@ -74,6 +61,7 @@ class DBusIdleMonitor(IdleMonitor):
     """
 
     def __init__(self, **kwargs) -> None:
+        import dbus
         super().__init__(**kwargs)
 
         session_bus = dbus.SessionBus()
@@ -87,7 +75,7 @@ class DBusIdleMonitor(IdleMonitor):
 
     def get_dbus_idle(self) -> float:
         dbus_idle = self.connection.GetIdletime(dbus_interface=self.service)
-        return dbus_idle
+        return int(dbus_idle)
 
 
 class XprintidleIdleMonitor(IdleMonitor):
@@ -95,12 +83,18 @@ class XprintidleIdleMonitor(IdleMonitor):
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
+        command = subprocess.run(
+            ["which", "xprintidle"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+        if command.returncode != 0:
+            raise AttributeError()
 
     def get_dbus_idle(self) -> float:
         stdout = subprocess.run(
             'xprintidle',
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE).stdout.decode("UTF-8").strip()
+            stderr=subprocess.PIPE).stdout.decode("UTF-8")
 
         idle_sec = int(stdout.strip())
 
@@ -160,3 +154,21 @@ class X11IdleMonitor(IdleMonitor):
         if path is None:
             raise OSError(f"Could not find library `{name}`")
         return ctypes.cdll.LoadLibrary(path)
+
+
+class WindowsIdleMonitor(IdleMonitor):
+    """
+    Idle monitor for Windows.
+
+    Based on
+      * https://stackoverflow.com/q/911856
+    """
+
+    def __init__(self, **kwargs) -> None:
+        import win32api
+        self.win32api = win32api
+
+    def get_dbus_idle(self) -> float:
+        current_tick = self.win32api.GetTickCount()
+        last_tick = self.win32api.GetLastInputInfo()
+        return current_tick - last_tick
