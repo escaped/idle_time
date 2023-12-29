@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name              = "dbus_idle"
-version           = "2023.3.2"
+version           = "2023.12.0"
 description       = "System idle time using DBus"
 readme            = "README.md"
 keywords          = ["lnxlink"]
