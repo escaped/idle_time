@@ -5,15 +5,16 @@ from typing import Any, List, Type
 import subprocess
 
 
-logger = logging.getLogger(name="dbus_idle")
-logger.setLevel(logging.ERROR)
-
+logger = logging.getLogger("dbus_idle")
+logging.basicConfig(level=logging.ERROR)
 
 class IdleMonitor:
     subclasses: List[Type["IdleMonitor"]] = []
 
-    def __init__(self, *, idle_threshold: int = 120) -> None:
+    def __init__(self, *, idle_threshold: int = 120, debug: bool=False) -> None:
         self.idle_threshold = idle_threshold
+        if debug:
+            logger.setLevel(logging.DEBUG)
 
     def __init_subclass__(self) -> None:
         super().__init_subclass__()
@@ -23,8 +24,6 @@ class IdleMonitor:
     def get_monitor(self, **kwargs) -> "IdleMonitor":
         """
         Return the first available idle monitor.
-
-        Raises `RuntimeError` if no usable monitor could be found.
         """
         for monitor_class in self.subclasses:
             try:
@@ -39,9 +38,12 @@ class IdleMonitor:
         """
         for monitor_class in self.subclasses:
             try:
-                return monitor_class().get_dbus_idle()
+                idle_time = monitor_class().get_dbus_idle()
+                logger.info("Using: %s", monitor_class.__name__)
+                return idle_time
             except Exception:
-                logger.warning("Could not load %s", monitor_class, exc_info=True)
+                logger.warning("Could not load %s", monitor_class.__name__, exc_info=False)
+        return None
         raise RuntimeError("Could not find a working monitor.")
 
 
@@ -131,6 +133,8 @@ class X11IdleMonitor(IdleMonitor):
         lib_x11.XDefaultRootWindow.restype = ctypes.c_uint32
         # fetch current settings
         self.display = lib_x11.XOpenDisplay(None)
+        if self.display is None:
+            raise AttributeError()
         self.root_window = lib_x11.XDefaultRootWindow(self.display)
 
         self.lib_xss = self._load_lib("Xss")
@@ -165,6 +169,7 @@ class WindowsIdleMonitor(IdleMonitor):
     """
 
     def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
         import win32api
         self.win32api = win32api
 
