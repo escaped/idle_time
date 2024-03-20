@@ -1,32 +1,38 @@
-# idle-time
+# dbus-idle
 
-[![pypi](https://img.shields.io/pypi/v/idle-time.svg)](https://pypi.python.org/pypi/idle-time) [![Build Status](https://travis-ci.org/escaped/idle-time.png?branch=master)](http://travis-ci.org/escaped/idle-time) [![Coverage](https://coveralls.io/repos/escaped/idle-time/badge.png?branch=master)](https://coveralls.io/r/escaped/idle-time) ![python version](https://img.shields.io/pypi/pyversions/idle-time.svg) ![Project status](https://img.shields.io/pypi/status/idle-time.svg) ![license](https://img.shields.io/pypi/l/idle-time.svg)
+[![pypi](https://img.shields.io/pypi/v/dbus-idle.svg)](https://pypi.python.org/pypi/dbus-idle)
+![python version](https://img.shields.io/pypi/pyversions/dbus-idle.svg)
+![license](https://img.shields.io/pypi/l/dbus-idle.svg)
 
-Detect user idle time or inactivity on Linux and Windows.
-
-**WARNING** This project is in an alpha status! Though there is already some code to support Windows, it has only been tested on Wayland/Gnome. 
+Python library to detect user idle time in milliseconds or inactivity on Linux and Windows.
 
 
 ## Requirements
 
-* Python 3.6 or later
+* Python 3.7 or later
 
 
 ## Installation
 
-Install using `pip install idle-time`
+Install using:
+```
+sudo apt install meson libdbus-glib-1-dev patchelf
+pip install dbus-idle
+```
 
 
 ## Usage
 
 You can use this module from the command line
-
-    python -m idle-time
-
+```bash
+dbus-idle
+```
 or access the current idle time from within your python program
+```python
+from dbus_idle import IdleMonitor
 
+milliseconds = IdleMonitor().get_dbus_idle()
+```
 
-    from idle_time import IdleMonitor
-
-    monitor = IdleMonitor.get_monitor()
-    monitor.get_idle_time()
+## Contribution
+This is based on the work by [Alexander Frenzel](https://github.com/escaped/dbus_idle)
