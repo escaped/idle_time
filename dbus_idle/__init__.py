@@ -44,7 +44,6 @@ class IdleMonitor:
             except Exception:
                 logger.warning("Could not load %s", monitor_class.__name__, exc_info=False)
         return None
-        raise RuntimeError("Could not find a working monitor.")
 
 
     def is_idle(self) -> bool:
