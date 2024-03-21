@@ -39,7 +39,7 @@ class IdleMonitor:
         for monitor_class in self.subclasses:
             try:
                 idle_time = monitor_class().get_dbus_idle()
-                logger.info("Using: %s", monitor_class.__name__)
+                logger.debug("Using: %s", monitor_class.__name__)
                 return idle_time
             except Exception:
                 logger.warning("Could not load %s", monitor_class.__name__, exc_info=False)
