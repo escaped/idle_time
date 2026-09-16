@@ -1,5 +1,5 @@
 """X11IdleMonitor with faked ctypes libs (no display needed)."""
-import ctypes
+
 import idle_time
 from idle_time import X11IdleMonitor
 
@@ -100,6 +100,31 @@ def test_x11_unsupported_status_raises_and_closes(monkeypatch):
     else:
         raise AssertionError("expected RuntimeError")
     assert x11.closed, "display must be closed on failed init"
+
+
+def test_x11_init_failure_closes_display_when_close_raises(monkeypatch):
+    x11 = _make_x11()
+    x11.XCloseDisplay = lambda d: (_ for _ in ()).throw(OSError("close failed"))
+    _patch(monkeypatch, x11=x11, xss=_make_xss(status=0))
+    try:
+        X11IdleMonitor()
+    except RuntimeError:
+        pass
+    else:
+        raise AssertionError("expected RuntimeError")
+
+
+def test_x11_falsy_display_skips_cleanup(monkeypatch):
+    x11 = _make_x11(display=0)
+    x11.XDefaultRootWindow = lambda d: (_ for _ in ()).throw(OSError("no root"))
+    _patch(monkeypatch, x11=x11)
+    try:
+        X11IdleMonitor()
+    except OSError:
+        pass
+    else:
+        raise AssertionError("expected OSError")
+    assert x11.closed == []
 
 
 def test_x11_query_failure_at_call_time(monkeypatch):

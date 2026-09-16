@@ -1,6 +1,7 @@
 """Base IdleMonitor dispatcher: get_monitor / get_dbus_idle / is_idle."""
+
 import logging
-import idle_time
+
 from idle_time import IdleMonitor
 
 

@@ -1,8 +1,9 @@
 """DBusIdleMonitor: GNOME/Mutter + KDE discovery via jeepney (mocked)."""
+
 import sys
 import types
-import idle_time
-from idle_time import IdleMonitor, DBusIdleMonitor
+
+from idle_time import DBusIdleMonitor
 
 
 def _install_jeepney_fake(services, idle_value=12345):

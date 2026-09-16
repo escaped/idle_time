@@ -1,4 +1,5 @@
 """CLI (__main__.main) tests."""
+
 import idle_time.__main__ as cli
 from idle_time import IdleMonitor
 
@@ -13,6 +14,7 @@ def test_cli_prints_idle(monkeypatch, capsys):
 
 def test_cli_debug_flag(monkeypatch, capsys):
     import logging
+
     seen = {}
 
     orig_init = IdleMonitor.__init__
