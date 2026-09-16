@@ -1,32 +1,51 @@
 # idle-time
 
-[![pypi](https://img.shields.io/pypi/v/idle-time.svg)](https://pypi.python.org/pypi/idle-time) [![Build Status](https://travis-ci.org/escaped/idle-time.png?branch=master)](http://travis-ci.org/escaped/idle-time) [![Coverage](https://coveralls.io/repos/escaped/idle-time/badge.png?branch=master)](https://coveralls.io/r/escaped/idle-time) ![python version](https://img.shields.io/pypi/pyversions/idle-time.svg) ![Project status](https://img.shields.io/pypi/status/idle-time.svg) ![license](https://img.shields.io/pypi/l/idle-time.svg)
+[![pypi](https://img.shields.io/pypi/v/idle-time.svg)](https://pypi.python.org/pypi/idle-time)
+![python version](https://img.shields.io/pypi/pyversions/idle-time.svg)
+![license](https://img.shields.io/pypi/l/idle-time.svg)
 
-Detect user idle time or inactivity on Linux and Windows.
-
-**WARNING** This project is in an alpha status! Though there is already some code to support Windows, it has only been tested on Wayland/Gnome. 
+Python library to detect user idle time in milliseconds or inactivity on Linux and Windows.
 
 
 ## Requirements
 
-* Python 3.6 or later
+* Python 3.7 or later
 
 
 ## Installation
 
-Install using `pip install idle-time`
+Install using:
+```
+pip install idle-time
+```
 
 
 ## Usage
 
 You can use this module from the command line
-
-    python -m idle-time
-
+```bash
+idle-time
+```
 or access the current idle time from within your python program
+```python
+from idle_time import IdleMonitor
 
+milliseconds = IdleMonitor().get_dbus_idle()
+```
 
-    from idle_time import IdleMonitor
+## Supported backends
 
-    monitor = IdleMonitor.get_monitor()
-    monitor.get_idle_time()
+`IdleMonitor()` automatically picks the first working backend, in this order:
+
+| Backend | Environment | Notes |
+|---|---|---|
+| `DBusIdleMonitor` | Linux desktops on DBus (GNOME, KDE Plasma, ...) | Discovers any `*IdleMonitor*` service on the session bus; falls back to `org.kde.IdleTime`. |
+| `XprintidleIdleMonitor` | Linux / X11 | Requires the `xprintidle` binary. |
+| `X11IdleMonitor` | Linux / X11 | Uses `XScreenSaverQueryInfo` (libX11 + libXss). |
+| `SwayIdleMonitor` | Linux / Wayland (sway) | Requires the `swayidle` binary; writes to `/tmp/idletime.txt`. |
+| `WindowsIdleMonitor` | Windows | Requires `pywin32`. |
+
+`get_dbus_idle()` returns the idle time in **milliseconds**, or `None` if no
+backend is available. `is_idle()` compares against `idle_threshold`
+(default `120`) — note the threshold is currently compared against
+milliseconds.
