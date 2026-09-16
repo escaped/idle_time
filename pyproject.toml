@@ -3,11 +3,11 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name              = "dbus_idle"
+name              = "idle-time"
 version           = "2026.8.0"
 description       = "System idle time using DBus"
 readme            = "README.md"
-keywords          = ["dbus_idle", "dbus-idle"]
+keywords          = ["idle_time", "idle-time"]
 requires-python   = ">=3.7.0"
 authors     = [
     {name="Alexander Frenzel", email="alex@relatedworks.com"},
@@ -25,10 +25,10 @@ dependencies = [
 
 
 [project.urls]
-"Source Code" = "https://github.com/bkbilly/dbus_idle"
+"Source Code" = "https://github.com/escaped/idle_time"
 
 [tool.setuptools.packages.find]
-include = ["dbus_idle*"]
+include = ["idle_time*"]
 
 [project.scripts]
-dbus-idle = "dbus_idle.__main__:main"
+idle-time = "idle_time.__main__:main"

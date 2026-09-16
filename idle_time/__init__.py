@@ -6,7 +6,7 @@ from typing import Any, List, Type
 import subprocess
 
 
-logger = logging.getLogger("dbus_idle")
+logger = logging.getLogger("idle_time")
 logging.basicConfig(level=logging.ERROR)
 
 class IdleMonitor:
