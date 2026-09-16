@@ -1,18 +1,18 @@
-import time
 import ctypes
 import ctypes.util
 import logging
-from typing import Any, List, Type
 import subprocess
-
+import time
+from typing import Any, List, Type
 
 logger = logging.getLogger("idle_time")
 logging.basicConfig(level=logging.ERROR)
 
+
 class IdleMonitor:
     subclasses: List[Type["IdleMonitor"]] = []
 
-    def __init__(self, *, idle_threshold: int = 120, debug: bool=False) -> None:
+    def __init__(self, *, idle_threshold: int = 120, debug: bool = False) -> None:
         self.idle_threshold = idle_threshold
         self.class_used = None
         if debug:
@@ -52,7 +52,7 @@ class IdleMonitor:
         else:
             try:
                 return self.class_used.get_dbus_idle()
-            except Exception as e:
+            except Exception:
                 logger.warning("Can't run the working monitor anymore.", exc_info=False)
                 self.class_used = None
                 return None
@@ -96,7 +96,9 @@ class DBusIdleMonitor(IdleMonitor):
                 self.idle_msg = new_method_call(remote_obj=idle_addr, method="GetIdletime")
                 break
             elif "org.kde.IdleTime" in service or service == "org.kde.IdleTime":
-                idle_addr = DBusAddress("/org/kde/IdleTime", bus_name=service, interface="org.kde.IdleTime")
+                idle_addr = DBusAddress(
+                    "/org/kde/IdleTime", bus_name=service, interface="org.kde.IdleTime"
+                )
                 self.idle_msg = new_method_call(remote_obj=idle_addr, method="getIdleTime")
                 break
         if self.idle_msg is None:
@@ -112,18 +114,12 @@ class XprintidleIdleMonitor(IdleMonitor):
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
-        command = subprocess.run(
-            ["which", "xprintidle"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE)
+        command = subprocess.run(["which", "xprintidle"], capture_output=True)
         if command.returncode != 0:
             raise AttributeError()
 
     def get_dbus_idle(self) -> float:
-        res = subprocess.run(
-            'xprintidle',
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE)
+        res = subprocess.run("xprintidle", capture_output=True)
         if res.returncode != 0:
             raise RuntimeError("xprintidle failed")
         stdout = res.stdout.decode("UTF-8").strip()
@@ -184,7 +180,9 @@ class X11IdleMonitor(IdleMonitor):
             # allocate memory for idle information
             self.xss_info = self.lib_xss.XScreenSaverAllocInfo()
 
-            status = self.lib_xss.XScreenSaverQueryInfo(self.display, self.root_window, self.xss_info)
+            status = self.lib_xss.XScreenSaverQueryInfo(
+                self.display, self.root_window, self.xss_info
+            )
             if status == 0:
                 raise RuntimeError("Not Supported...")
         except Exception:
@@ -223,10 +221,7 @@ class SwayIdleMonitor(IdleMonitor):
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self.output_file = "/tmp/idletime.txt"
-        command = subprocess.run(
-            ["which", "swayidle"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE)
+        command = subprocess.run(["which", "swayidle"], capture_output=True)
         if command.returncode != 0:
             raise AttributeError()
         with open(self.output_file, "w") as file:
@@ -237,7 +232,7 @@ class SwayIdleMonitor(IdleMonitor):
         )
 
     def get_dbus_idle(self) -> float:
-        with open(self.output_file, "r") as file:
+        with open(self.output_file) as file:
             idle_time = int(file.read())
             if idle_time != 0:
                 idle_time = time.time() - idle_time
@@ -256,6 +251,7 @@ class WindowsIdleMonitor(IdleMonitor):
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         import win32api
+
         self.win32api = win32api
 
     def get_dbus_idle(self) -> float:

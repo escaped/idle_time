@@ -1,9 +1,10 @@
 """Xprintidle / Sway / Windows monitors (mocked subprocess, file, win32)."""
+
 import sys
 import types
-import builtins
+
 import idle_time
-from idle_time import XprintidleIdleMonitor, SwayIdleMonitor, WindowsIdleMonitor
+from idle_time import SwayIdleMonitor, WindowsIdleMonitor, XprintidleIdleMonitor
 
 
 class _Res:

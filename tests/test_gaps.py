@@ -1,9 +1,12 @@
 """Gap-closure tests to reach 100%: X11 cleanup-failure paths,
 Sway happy-path init, __main__ guard."""
+
 import runpy
-import idle_time
-from idle_time import IdleMonitor, X11IdleMonitor, SwayIdleMonitor
+
 from test_x11 import _make_x11, _make_xss, _patch
+
+import idle_time
+from idle_time import IdleMonitor, SwayIdleMonitor, X11IdleMonitor
 
 
 class _Res:
@@ -49,6 +52,7 @@ def test_x11_del_without_display_ok():
 
 def test_sway_init_success_writes_file(monkeypatch, tmp_path):
     import builtins
+
     real_open = builtins.open
     target = tmp_path / "idletime.txt"
     calls = []

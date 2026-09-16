@@ -1,11 +1,10 @@
-from . import IdleMonitor
 import argparse
+
+from . import IdleMonitor
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        prog="idle-time",
-        description="Get idle time in milliseconds")
+    parser = argparse.ArgumentParser(prog="idle-time", description="Get idle time in milliseconds")
     parser.add_argument("-d", "--debug", action="store_true", help="Show debug messeges")
     args = parser.parse_args()
 

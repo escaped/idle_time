@@ -1,5 +1,7 @@
 """Shared fixtures: isolate IdleMonitor.subclasses registry between tests."""
+
 import pytest
+
 import idle_time
 
 
