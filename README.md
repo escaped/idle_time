@@ -1,5 +1,13 @@
 # idle-time
 
+> [!IMPORTANT]
+> **This repository is archived and no longer maintained.**
+> Development continues in [bkbilly/dbus_idle](https://github.com/bkbilly/dbus_idle) —
+> an actively maintained fork of this initial work, published on PyPI as
+> [`dbus-idle`](https://pypi.org/project/dbus-idle/).
+> The API is unchanged (`from dbus_idle import IdleMonitor`); switch with
+> `pip install dbus-idle` (see its README for system dependencies).
+
 [![pypi](https://img.shields.io/pypi/v/idle-time.svg)](https://pypi.python.org/pypi/idle-time) [![Build Status](https://travis-ci.org/escaped/idle-time.png?branch=master)](http://travis-ci.org/escaped/idle-time) [![Coverage](https://coveralls.io/repos/escaped/idle-time/badge.png?branch=master)](https://coveralls.io/r/escaped/idle-time) ![python version](https://img.shields.io/pypi/pyversions/idle-time.svg) ![Project status](https://img.shields.io/pypi/status/idle-time.svg) ![license](https://img.shields.io/pypi/l/idle-time.svg)
 
 Detect user idle time or inactivity on Linux and Windows.
